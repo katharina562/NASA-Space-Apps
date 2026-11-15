@@ -1,0 +1,6 @@
+[server]
+# serves share/team_app/static/ at /app/static/ (Curiosity photo thumbnails in the map popups)
+enableStaticServing = true
+
+[browser]
+gatherUsageStats = false

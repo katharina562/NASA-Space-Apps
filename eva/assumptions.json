@@ -1,0 +1,118 @@
+{
+  "_about": "ARES-X EVA budget assumptions sheet. Edit values here, not in code. Every number is an engineering approximation; 'verify' marks values worth checking against a primary source before the final slides.",
+
+  "astronaut": {
+    "body_mass_kg":        {"value": 75,    "unit": "kg",   "source": "Assumed average crew member"},
+    "gravity_ratio":       {"value": 0.38,  "unit": "-",    "source": "Mars g / Earth g"},
+    "rest_floor_W":        {"value": 100,   "unit": "W",    "source": "Floor on the Pandolf resting term; applying G to it underestimates basal metabolism (ICES-2025-129 caveat)"},
+    "stop_work_note":      {"value": "see cases.stop_work_W", "unit": "", "source": "Stationary geology work at a science stop, ~Apollo station work (~800-1000 BTU/h)"}
+  },
+
+  "walking": {
+    "v_flat_mps":          {"value": 0.75,  "unit": "m/s",  "source": "Apollo-derived V = 0.75 - 0.01*theta, capped at 0.75 m/s"},
+    "v_slope_coeff":       {"value": 0.01,  "unit": "m/s per deg", "source": "Apollo-derived speed function"},
+    "max_slope_deg":       {"value": 20,    "unit": "deg",  "source": "No-go limit (NASA xEVA concept, NaviGATOR ICES-2024, JSC CSRM)"},
+    "pace_to_peak_limit":  {"value": true,  "unit": "",     "source": "Operational rule: on steep pitches the astronaut slows down so the metabolic rate stays at the 2000 BTU/h peak limit; such legs are flagged 'paced'"},
+    "downhill_rule":       {"value": "level", "unit": "",   "source": "Downhill grade treated as level ground in the metabolic term (conservative; Pandolf has no valid negative-grade term)"}
+  },
+
+  "terrain": {
+    "_source": "eta = Pandolf terrain factor (1.0 blacktop, 1.1 dirt road, 1.2 light brush, 1.5 heavy brush, 1.8 swamp, 2.1 loose sand) mapped to Mars ground; [best, nominal, worst]. speed_factor scales the Apollo speed; boxwork 0.75 reproduces the team planning value of ~40 min/km incl. margin.",
+    "plain":  {"eta": [1.1, 1.2, 1.3], "speed_factor": 1.00},
+    "ridge":  {"eta": [1.2, 1.3, 1.5], "speed_factor": 0.75},
+    "hollow": {"eta": [1.5, 1.8, 2.1], "speed_factor": 0.80},
+    "sand":   {"eta": [1.8, 2.1, 2.1], "speed_factor": 0.70}
+  },
+
+  "cases": {
+    "_source": "Uncertainty band. margin multiplies walking time (MIT SEXTANT field tests under-predicted time and energy by 20-30%).",
+    "best":    {"terrain_index": 0, "suit_load_kg": 50, "margin": 1.20, "stop_work_W": 230},
+    "nominal": {"terrain_index": 1, "suit_load_kg": 65, "margin": 1.25, "stop_work_W": 260},
+    "worst":   {"terrain_index": 2, "suit_load_kg": 80, "margin": 1.30, "stop_work_W": 300}
+  },
+
+  "consumables": {
+    "o2_kg_per_MJ":        {"value": 0.0476, "unit": "kg/MJ", "source": "~1 L O2 per 20.1 kJ metabolic"},
+    "h_fg_MJ_per_kg":      {"value": 2.43,   "unit": "MJ/kg", "source": "Latent heat of water evaporation at suit temperature"},
+    "o2_capacity_kg":      {"value": 0.55,   "unit": "kg",    "source": "EMU-class primary O2 (~1.2 lb) - verify"},
+    "water_capacity_kg":   {"value": 4.5,    "unit": "kg",    "source": "EMU-class feedwater (~10 lb) - verify"},
+    "reserve_fraction":    {"value": 0.25,   "unit": "-",     "source": "Team assumption: keep 25% of each consumable at return"}
+  },
+
+  "limits": {
+    "peak_btuh":           {"value": 2000,  "unit": "BTU/h", "source": "Apollo-derived peak metabolic limit"},
+    "avg_btuh":            {"value": 1600,  "unit": "BTU/h", "source": "Apollo-derived average metabolic limit"},
+    "max_eva_h":           {"value": 4.0,   "unit": "h",     "source": "Team EVA limit"},
+    "min_sun_elev_deg":    {"value": 5,     "unit": "deg",   "source": "Team assumption: whole EVA in daylight (visual navigation, no GPS)"}
+  },
+
+  "suit_thermal": {
+    "q_elec_W":            {"value": 60,    "unit": "W",     "source": "Fan, pump, radio, HUD heat inside the suit - placeholder until Marwane's battery model"},
+    "area_m2":             {"value": 2.2,   "unit": "m2",    "source": "Outer suit surface area"},
+    "area_proj_m2":        {"value": 0.6,   "unit": "m2",    "source": "Effective area facing the sun"},
+    "emissivity":          {"value": 0.85,  "unit": "-",     "source": "Outer fabric layer"},
+    "solar_absorptivity":  {"value": 0.25,  "unit": "-",     "source": "White suit with some dust"},
+    "u_insulation_Wm2K":   {"value": 0.8,   "unit": "W/m2K", "source": "Suit insulation conductance in 700 Pa CO2 (MLI is degraded by gas conduction)"},
+    "t_inner_K":           {"value": 295,   "unit": "K",     "source": "Inner suit temperature held by the cooling garment"},
+    "h_conv_Wm2K":         {"value": 1.0,   "unit": "W/m2K", "source": "Free convection in Mars CO2, order of magnitude 0.5-2"},
+    "view_factor_sky":     {"value": 0.5,   "unit": "-",     "source": "Standing person sees half sky, half ground"}
+  },
+
+  "suit_power": {
+    "_source": "Suit battery: placeholder until Marwane's battery model. Draw = suit_thermal.q_elec_W + any heater power.",
+    "battery_Wh":          {"value": 450,   "unit": "Wh",    "source": "EMU-class suit battery (~26.6 Ah at 16.8 V) - verify (Marwane)"},
+    "reserve_fraction":    {"value": 0.25,  "unit": "-",     "source": "Same 25% reserve rule as O2 and water"}
+  },
+
+  "rover": {
+    "_source": "Unpressurized LRV-class rover the astronaut can drive; it powers and charges the suit while docked and relays the suit radio to the base. Placeholders (Marwane to refine battery/radio).",
+    "v_max_mps":           {"value": 1.4,   "unit": "m/s",   "source": "~5 km/h on rough Mars ground (Apollo LRV averaged ~8 km/h on the Moon)"},
+    "v_slope_loss":        {"value": 0.5,   "unit": "-",     "source": "Speed falls linearly to 50% of v_max at the rover's max slope"},
+    "max_slope_deg":       {"value": 15,    "unit": "deg",   "source": "Driving limit on loose slopes (LRV rated 25 deg; conservative)"},
+    "avoid_boxwork":       {"value": true,  "unit": "",      "source": "1-2 m boxwork ridges are not drivable: park at the edge and walk in"},
+    "mass_kg":             {"value": 400,   "unit": "kg",    "source": "Rover + suited astronaut + samples"},
+    "rolling_coeff":       {"value": 0.10,  "unit": "-",     "source": "Wheel rolling resistance on loose regolith"},
+    "drive_efficiency":    {"value": 0.60,  "unit": "-",     "source": "Battery to wheel (motors, gears); no regeneration downhill"},
+    "hotel_W":             {"value": 50,    "unit": "W",     "source": "Rover avionics + relay radio while on"},
+    "battery_Wh":          {"value": 8000,  "unit": "Wh",    "source": "LRV had ~8.7 kWh (2 x 121 Ah, 36 V)"},
+    "reserve_fraction":    {"value": 0.25,  "unit": "-",     "source": "Keep 25% rover battery at return"},
+    "seated_metabolic_W":  {"value": 150,   "unit": "W",     "source": "Driving seated in a suit (~500 BTU/h, Apollo LRV crews)"},
+    "suit_charge_W":       {"value": 100,   "unit": "W",     "source": "Suit battery charging from the rover while docked"},
+    "margin":              {"value": 1.15,  "unit": "-",     "source": "Time margin for driving (detours around rocks)"}
+  },
+
+  "comms": {
+    "_source": "Line of sight on the DEM (with Mars curvature) plus a maximum range. Simplified coverage model, not a radio propagation calculation. Placeholder antenna heights (Marwane).",
+    "base_antenna_m":      {"value": 5.0,   "unit": "m",     "source": "Mast on the habitat"},
+    "rover_antenna_m":     {"value": 2.5,   "unit": "m",     "source": "Mast on the rover"},
+    "suit_antenna_m":      {"value": 2.0,   "unit": "m",     "source": "Helmet / backpack antenna"},
+    "suit_rover_range_m":  {"value": 1500,  "unit": "m",     "source": "Low-power suit radio to the rover access point (Apollo EVA-to-LRV relay ~ km class) - placeholder (Marwane)"},
+    "rover_base_range_m":  {"value": 10000, "unit": "m",     "source": "Rover-to-base link, larger than the 3x3 km map - placeholder (Marwane)"}
+  },
+
+  "navigation": {
+    "_source": "Illustrative position-uncertainty model for the simulation (radius in metres, linear growth, NOT a statistical confidence level). No beacons or satellites.",
+    "base_fix_m":          {"value": 1.0,   "unit": "m",     "source": "Habitat is a surveyed point (HiRISE / DEM co-registered)"},
+    "rover_drift_frac":    {"value": 0.02,  "unit": "-",     "source": "Rover dead reckoning drift ~2% of distance driven (MER/MSL wheel + visual odometry order of magnitude)"},
+    "walk_drift_frac":     {"value": 0.03,  "unit": "-",     "source": "Astronaut dead reckoning ~3% of distance walked (pedestrian inertial / step counting, order of magnitude)"},
+    "time_drift_m_per_min":{"value": 0.2,   "unit": "m/min", "source": "Extra drift while on foot, also when standing still (sensor bias) - assumption"},
+    "dock_m":              {"value": 3.0,   "unit": "m",     "source": "Within 3 m of the rover = docked / aboard: astronaut takes the rover's position estimate"},
+    "dock_add_m":          {"value": 0.5,   "unit": "m",     "source": "Extra uncertainty when copying the rover's estimate"}
+  },
+
+  "climate": {
+    "_source": "Representative Gale sol near equinox, shaped to REMS ranges. Replace with a REMS/MCD hourly table via --climate when Almila has it.",
+    "latitude_deg":        {"value": -4.81, "unit": "deg",   "source": "Boxwork stops (sol 4625/4709)"},
+    "solar_longitude_deg": {"value": 0,     "unit": "deg",   "source": "Ls = 0 (equinox) - assumed EVA season"},
+    "solar_const_Wm2":     {"value": 589,   "unit": "W/m2",  "source": "Mean solar irradiance at Mars distance"},
+    "transmittance":       {"value": 0.75,  "unit": "-",     "source": "Global (direct + diffuse) transmittance for dust opacity tau ~0.5"},
+    "t_air_min_K":         {"value": 203,   "unit": "K",     "source": "REMS: ~-70 C before dawn"},
+    "t_air_max_K":         {"value": 279,   "unit": "K",     "source": "REMS: up to ~+6 C in the afternoon"},
+    "t_air_min_hour":      {"value": 5.5,   "unit": "LMST",  "source": "REMS diurnal shape"},
+    "t_air_max_hour":      {"value": 14.0,  "unit": "LMST",  "source": "REMS diurnal shape"},
+    "t_ground_min_K":      {"value": 190,   "unit": "K",     "source": "REMS ground temperature range 150-300 K"},
+    "t_ground_max_K":      {"value": 290,   "unit": "K",     "source": "REMS ground temperature range"},
+    "t_ground_max_hour":   {"value": 13.0,  "unit": "LMST",  "source": "REMS diurnal shape"},
+    "t_sky_factor":        {"value": 0.8,   "unit": "-",     "source": "Effective sky temperature = 0.8 * air temperature (dusty CO2 sky)"}
+  }
+}

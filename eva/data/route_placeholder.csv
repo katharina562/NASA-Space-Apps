@@ -1,0 +1,13 @@
+# PLACEHOLDER route until the habitat is chosen and Cilli's least-cost route exists.
+# Habitat assumed ~1 km from the boxwork edge; ridge->nodules distance (~150 m) from sol 4709 vs 4625 coordinates.
+# kind: walk|stop. walk: length_m = horizontal distance, dz_m = elevation change (+ uphill), terrain = plain|ridge|hollow|sand
+kind,name,length_m,dz_m,terrain,duration_min
+walk,Habitat to boxwork edge,800,20,plain,
+walk,Edge to Nevado Sajama ridge,250,8,ridge,
+stop,Stop 1 ridge (Nevado Sajama),,,,30
+walk,Ridge down to Valle de la Luna hollow,30,-2,hollow,
+stop,Stop 2 hollow (Valle de la Luna),,,,30
+walk,Hollow to Bococo nodules,150,5,ridge,
+stop,Stop 3 nodules (Bococo),,,,30
+walk,Bococo back to boxwork edge,200,-10,ridge,
+walk,Edge back to habitat,800,-21,plain,
